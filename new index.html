@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Harsha's Page</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #1e293b;
+        color: #f8fafc;
+        margin: 0;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        max-width: 650px;
+        width: 100%;
+        background: #0f172a;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #38bdf8;
+        margin-top: 0;
+      }
+
+      p {
+        line-height: 1.6;
+        color: #cbd5e1;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 15px;
+      }
+
+      ul {
+        padding-left: 20px;
+        margin-bottom: 25px;
+      }
+
+      li {
+        margin-bottom: 5px;
+        color: #94a3b8;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background-color: #1e293b;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #0284c7;
+        color: white;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #1e293b;
+      }
+
+      tr:nth-child(odd) {
+        background-color: #111827;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      input[type="text"],
+      input[type="email"] {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #475569;
+        background-color: #0f172a;
+        color: white;
+        font-size: 14px;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #38bdf8;
+      }
+
+      .radio-checkbox-group {
+        margin: 15px 0;
+        padding: 15px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background-color: #1e293b;
+      }
+
+      legend {
+        font-weight: bold;
+        color: #38bdf8;
+        padding: 0 10px;
+      }
+
+      .option-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 8px 0;
+        cursor: pointer;
+      }
+
+      input[type="submit"],
+      input[type="button"] {
+        background-color: #0284c7;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      input[type="submit"]:hover,
+      input[type="button"]:hover {
+        background-color: #0369a1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>This is a simple HTML list document.</h3>
+      <h2>This is a simple HTML list document.</h2>
+      <h1>This is a simple HTML list document.</h1>
+
+      <ul>
+        <li>hello</li>
+        <li>hello</li>
+        <li>hello</li>
+      </ul>
+
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facilis qui
+        incidunt minima aut voluptas nesciunt numquam ex tenetur praesentium.
+        Illo distinctio est optio corrupti, unde officiis iste itaque porro
+        animi. Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic
+        doloribus nostrum beatae harum inventore veniam aspernatur ipsum enim
+        molestiae qui blanditiis voluptatem exercitationem, praesentium
+        dignissimos ipsa amet, quia voluptas tenetur!
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>S.N.</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Harsha</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Hello</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <form>
+        <div class="input-group">
+          <input type="text" name="name" placeholder="Enter a name" required />
+        </div>
+        <div class="input-group">
+          <input type="text" name="address" placeholder="Address" />
+        </div>
+        <div class="input-group">
+          <input type="email" name="email" placeholder="Email" />
+        </div>
+
+        <fieldset class="radio-checkbox-group">
+          <legend>Status</legend>
+          <label class="option-item">
+            <input type="radio" id="huey" name="drone" value="huey" checked />
+            Done
+          </label>
+          <label class="option-item">
+            <input type="radio" id="not" name="drone" value="not" />
+            Not Done
+          </label>
+          <label class="option-item">
+            <input type="radio" id="working" name="drone" value="working" />
+            Working
+          </label>
+        </fieldset>
+
+        <fieldset class="radio-checkbox-group">
+          <legend>Choose Course Features:</legend>
+          <label class="option-item">
+            <input type="checkbox" id="bca" name="course" value="bca" checked />
+            BCA
+          </label>
+          <label class="option-item">
+            <input type="checkbox" id="csit" name="course" value="csit" />
+            CSIT
+          </label>
+        </fieldset>
+
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+</html>
