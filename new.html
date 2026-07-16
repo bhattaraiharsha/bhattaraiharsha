@@ -1,50 +1,270 @@
 <!DOCTYPE html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard - Harsha</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #056f8f;
+            --accent-hover: #0a88af;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-    <title>batman</title>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            margin: 0;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* FIX: Fluid container that adapts smoothly from mobile up to 1000px wide */
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            /* Automatically drops to single column if space is less than ~340px per card */
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin: auto 0;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3 { 
+            margin-top: 0; 
+            font-weight: 700;
+        }
+        
+        .description-box {
+            border-left: 4px solid var(--accent);
+            padding-left: 1rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background-color: var(--bg-primary);
+            color: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus {
+            border-color: var(--accent);
+        }
+
+        .radio-checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .radio-checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .btn-submit {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover { 
+            background-color: var(--accent-hover); 
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* FIX: Wrap table to prevent overflow clipping on small screens */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            min-width: 400px; /* Ensures table headers don't squish too tightly */
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #334155;
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background-color: rgba(5, 111, 143, 0.2); 
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-muted);
+        }
+    </style>
 </head>
-
 <body>
-   onepiece is real
-    <h1>List</h1>
-    <h2>heading 2</h2>
-    <h3>heading3</h3>
-    <h4>heading4</h4>
-    <h5>heading 5</h5>
-    <h6>heading 6</h6>
-    <p>this is my first paragraph</p>
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil vero perferendis adipisci quae hic. Rem eligendi
-        accusantium, deserunt, dolorum quo dicta debitis omnis atque possimus excepturi exercitationem necessitatibus
-        pariatur nobis.</p>
 
-<b>bold</b>
-<em>one</em>
-<table border="1">
-    <head>
-        <tr>
-            <th>S.N</th>
-            <th>Name</th>
+    <div class="container">
+        <!-- Input Form Control Panel -->
+        <div class="card">
+            <h1>Data Management</h1>
+            <div class="description-box">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis qui incidunt minima aut voluptas nesciunt.
+            </div>
+
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="username">Name</label>
+                    <input type="text" id="username" placeholder="Enter name" required />
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" placeholder="Enter address" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter email" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <div class="radio-checkbox-group">
+                        <label><input type="radio" name="status" value="Done" checked /> Done</label>
+                        <label><input type="radio" name="status" value="Not Done" /> Not Done</label>
+                        <label><input type="radio" name="status" value="Working" /> Working</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Program Registration</label>
+                    <div class="radio-checkbox-group">
+                        <label><input type="checkbox" id="bca" value="BCA" /> BCA</label>
+                        <label><input type="checkbox" id="csit" value="CSIT" /> CSIT</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Record</button>
+            </form>
+        </div>
+
+        <!-- Live Dynamic Grid -->
+        <div class="card">
+            <h2>Registered Records</h2>
+            <ul style="padding-left: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                <li>Dynamic updates activated</li>
+                <li>Validates data before insertion</li>
+            </ul>
             
-        </tr>
-        <body>
-            <td>1
-            </td>
-            <td>hello</td>
-            <tr></tr>
-            <td>2</td>
-            <td>superman</td>
-        </body>
-    </head>
-    
-</table>
-</body>
-<a href="https://www.google.com"> link 1"</a>
-<a href="https://www.facebook.com">link 2</a>
-a <sup>2</sup>+2ab+b <sup>2</sup>
-<body>
-    
-    h <sub>2</sub>0
+            <div class="table-responsive">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>S.N</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Programs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Harsha</td>
+                            <td>harsha@example.com</td>
+                            <td>BCA</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        let serialNumber = 1;
+
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            serialNumber++;
+            const name = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            
+            // Collect checked programs
+            let programs = [];
+            if(document.getElementById('bca').checked) programs.push('BCA');
+            if(document.getElementById('csit').checked) programs.push('CSIT');
+            const programStr = programs.length > 0 ? programs.join(', ') : 'None';
+
+            // Insert dynamic row execution
+            const tbody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+            const newRow = tbody.insertRow();
+            
+            newRow.insertCell(0).innerText = serialNumber;
+            newRow.insertCell(1).innerText = name;
+            newRow.insertCell(2).innerText = email;
+            newRow.insertCell(3).innerText = programStr;
+
+            // State management reset
+            this.reset();
+        });
+    </script>
 </body>
 </html>

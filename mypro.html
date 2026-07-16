@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Profile & Dynamic Admin Ledger Engine</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --surface-card: #111827;
+            --border-primary: rgba(255, 255, 255, 0.08);
+            --text-title: #f9fafb;
+            --text-body: #9ca3af;
+            --brand-primary: #38bdf8;
+            --brand-hover: #0ea5e9;
+            --brand-glow: rgba(56, 189, 248, 0.15);
+            --input-bg: #030712;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-error: #ef4444;
+            --radius: 12px;
+            --transition-config: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "JetBrains Mono", "Inter", monospace;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-title);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .workspace-container {
+            width: 100%;
+            max-width: 850px;
+            position: relative;
+        }
+
+        .view-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        .view-card.active-state {
+            display: flex;
+        }
+
+        .section-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            border-bottom: 1px solid var(--border-primary);
+            padding-bottom: 1.25rem;
+        }
+
+        h1 { font-size: 1.75rem; font-weight: 700; color: var(--text-title); letter-spacing: -0.03em; }
+        .username-sub { font-size: 0.95rem; color: var(--brand-primary); font-weight: 500; text-transform: lowercase; margin-bottom: 0.25rem; }
+        p.subtitle { font-size: 0.85rem; color: var(--text-body); line-height: 1.5; }
+
+        .readme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .readme-card {
+            background: rgba(3, 7, 18, 0.4);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: var(--transition-config);
+            cursor: default;
+        }
+
+        .readme-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(56, 189, 248, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .readme-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--brand-primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .readme-meta i { width: 16px; height: 16px; }
+        .readme-desc { font-size: 0.85rem; color: var(--text-body); line-height: 1.4; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-title);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .interactive-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: var(--transition-config);
+        }
+
+        .interactive-input:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--brand-glow);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-primary);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem;
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-title);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+        }
+
+        td {
+            color: var(--text-body);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .matrix-select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            min-width: 150px;
+        }
+
+        .matrix-select {
+            width: 100%;
+            padding: 6px 30px 6px 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition-config);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .select-approve {
+            color: var(--accent-success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            background-color: rgba(16, 185, 129, 0.08);
+        }
+        .select-decline {
+            color: var(--accent-error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background-color: rgba(239, 68, 68, 0.08);
+        }
+        .select-process {
+            color: var(--accent-warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            background-color: rgba(245, 158, 11, 0.08);
+        }
+
+        .matrix-select-wrapper::after {
+            content: '▼';
+            font-size: 8px;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .matrix-select option {
+            background-color: #1f2937;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .btn-dispatch {
+            width: 100%;
+            padding: 0.85rem 1.5rem;
+            background: var(--brand-primary);
+            color: var(--bg-main);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-config);
+        }
+
+        .btn-dispatch:hover {
+            background: var(--brand-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-dispatch:active { transform: translateY(0); }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-title);
+            border: 1px solid var(--border-primary);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="workspace-container">
+
+        <!-- STAGE 1: SYSTEM PROFILE (README / IDENTITY GATE) -->
+        <div id="stageProfile" class="view-card active-state">
+            <div class="section-header">
+                <h1>Profile</h1>
+                <div class="username-sub">bhattaraiharsha</div>
+                <p class="subtitle">Core system repository information and authorization pathway.</p>
+            </div>
+            
+            <div class="readme-grid">
+                <div class="readme-card">
+                    <div class="readme-meta"><i data-lucide="compass"></i> Focus</div>
+                    <div class="readme-desc">Currently working on Web Platforms</div>
+                </div>
+                <div class="readme-card">
+                    <div class="readme-meta"><i data-lucide="book-open"></i> Education</div>
+                    <div class="readme-desc">Learning Systems Engineering & Core Architecture</div>
+                </div>
+                <div class="readme-card">
+                    <div class="readme-meta"><i data-lucide="users-round"></i> Strategy</div>
+                    <div class="readme-desc">Looking to collaborate on Responsive UI Design</div>
+                </div>
+                <div class="readme-card">
+                    <div class="readme-meta"><i data-lucide="mail"></i> Contact</div>
+                    <div class="readme-desc">Reach me: bhattaraiharsha@example.com</div>
+                </div>
+            </div>
+
+            <button type="button" id="gateInitAuth" class="btn-dispatch">
+                <span>Initialize Gateway Login</span>
+                <i data-lucide="log-in" style="width:16px; height:16px;"></i>
+            </button>
+        </div>
+
+        <!-- STAGE 2: CREDENTIAL ENTRY GATEWAY -->
+        <div id="stageAuth" class="view-card">
+            <div class="section-header">
+                <h1>Security Authorization</h1>
+                <p class="subtitle">Verify execution authority parameters inside the runtime environment.</p>
+            </div>
+            <form id="authExecutionEngine">
+                <div class="form-group">
+                    <label for="inputIdentity">Identity Token</label>
+                    <input type="text" id="inputIdentity" class="interactive-input" value="admin" required />
+                </div>
+                <div class="form-group">
+                    <label for="inputKeyphrase">Access Keyphrase</label>
+                    <input type="password" id="inputKeyphrase" class="interactive-input" value="password" required />
+                </div>
+                <button type="submit" class="btn-dispatch">
+                    <span>Verify Identity Matrix</span>
+                    <i data-lucide="shield-check" style="width:16px; height:16px;"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- STAGE 3: DATA SUBMISSION PANEL -->
+        <div id="stageSubmit" class="view-card">
+            <div class="section-header">
+                <h1>Data Node Registration</h1>
+                <p class="subtitle">Build and validate state record payloads to commit to the directory index.</p>
+            </div>
+            <form id="submissionExecutionEngine">
+                <div class="form-group">
+                    <label for="dataNodeName">Full Identity Name</label>
+                    <input type="text" id="dataNodeName" class="interactive-input" placeholder="E.g., Harsha Bhattarai" required />
+                </div>
+                <div class="form-group">
+                    <label for="dataNodeEmail">Target Communications Email</label>
+                    <input type="email" id="dataNodeEmail" class="interactive-input" placeholder="name@domain.com" required />
+                </div>
+
+                <button type="submit" class="btn-dispatch">
+                    <span>Commit Registry Stream</span>
+                    <i data-lucide="database" style="width:16px; height:16px;"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- STAGE 4: MASTER SUBMISSION REGISTRY RECORD (WITH LIVE ACTION MANAGEMENT SELECTS) -->
+        <div id="stageManifest" class="view-card">
+            <div class="section-header">
+                <h1 style="color: var(--accent-success); display:flex; align-items:center; gap:0.5rem;">
+                    <i data-lucide="layers" style="width:22px; height:22px;"></i> Master Submission Registry
+                </h1>
+                <p class="subtitle">Review entries and execute transactional modifications inside the status state matrix column below.</p>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>Identity Name</th>
+                            <th>Communication Route</th>
+                            <th>Status State Matrix</th>
+                        </tr>
+                    </thead>
+                    <tbody id="masterRegistryTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; gap: 1rem; width: 100%;">
+                <button type="button" id="btnRegisterNewEntry" class="btn-dispatch">
+                    <i data-lucide="plus-circle" style="width:16px; height:16px;"></i>
+                    <span>Register New Data</span>
+                </button>
+                <button type="button" id="resetRuntimePipeline" class="btn-dispatch btn-secondary">
+                    <i data-lucide="log-out" style="width:16px; height:16px;"></i>
+                    <span>Terminate Session</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+
+            const globalSubmissionRegistry = [
+                { name: "Harsha Bhattarai", email: "harsha@example.com", status: "On Process" }
+            ];
+
+            const stageProfile = document.getElementById("stageProfile");
+            const stageAuth = document.getElementById("stageAuth");
+            const stageSubmit = document.getElementById("stageSubmit");
+            const stageManifest = document.getElementById("stageManifest");
+
+            const btnGateInitAuth = document.getElementById("gateInitAuth");
+            const formAuthEngine = document.getElementById("authExecutionEngine");
+            const formSubmissionEngine = document.getElementById("submissionExecutionEngine");
+            const masterRegistryTableBody = document.getElementById("masterRegistryTableBody");
+            const btnRegisterNewEntry = document.getElementById("btnRegisterNewEntry");
+            const btnResetPipeline = document.getElementById("resetRuntimePipeline");
+
+            function dispatchViewTransition(activeNodeStage) {
+                [stageProfile, stageAuth, stageSubmit, stageManifest].forEach(stage => {
+                    stage.classList.remove("active-state");
+                });
+                activeNodeStage.classList.add("active-state");
+            }
+
+            function updateSelectStyle(selectElement) {
+                selectElement.className = "matrix-select";
+                if (selectElement.value === "Approve") selectElement.classList.add("select-approve");
+                if (selectElement.value === "Decline") selectElement.classList.add("select-decline");
+                if (selectElement.value === "On Process") selectElement.classList.add("select-process");
+            }
+
+            function syncRegistryTableUI() {
+                masterRegistryTableBody.innerHTML = "";
+                
+                globalSubmissionRegistry.forEach((record, index) => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>#0${index + 1}</td>
+                        <td style="font-weight:600; color:#fff;">${record.name}</td>
+                        <td>${record.email}</td>
+                        <td>
+                            <div class="matrix-select-wrapper">
+                                <select class="matrix-select" data-index="${index}">
+                                    <option value="Approve" ${record.status === 'Approve' ? 'selected' : ''}>Approve</option>
+                                    <option value="Decline" ${record.status === 'Decline' ? 'selected' : ''}>Decline</option>
+                                    <option value="On Process" ${record.status === 'On Process' ? 'selected' : ''}>On Process</option>
+                                </select>
+                            </div>
+                        </td>
+                    `;
+                    
+                    masterRegistryTableBody.appendChild(row);
+                    
+                    const selectNode = row.querySelector(".matrix-select");
+                    updateSelectStyle(selectNode);
+
+                    selectNode.addEventListener("change", (e) => {
+                        const targetIndex = e.target.getAttribute("data-index");
+                        globalSubmissionRegistry[targetIndex].status = e.target.value;
+                        updateSelectStyle(e.target);
+                    });
+                });
+            }
+
+            btnGateInitAuth.addEventListener("click", () => {
+                dispatchViewTransition(stageAuth);
+            });
+
+            formAuthEngine.addEventListener("submit", (e) => {
+                e.preventDefault();
+                dispatchViewTransition(stageSubmit);
+            });
+
+            formSubmissionEngine.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const clientName = document.getElementById("dataNodeName").value.trim();
+                const clientEmail = document.getElementById("dataNodeEmail").value.trim();
+
+                globalSubmissionRegistry.push({
+                    name: clientName,
+                    email: clientEmail,
+                    status: "On Process"
+                });
+
+                syncRegistryTableUI();
+                formSubmissionEngine.reset();
+                dispatchViewTransition(stageManifest);
+            });
+
+            btnRegisterNewEntry.addEventListener("click", () => {
+                dispatchViewTransition(stageSubmit);
+            });
+
+            btnResetPipeline.addEventListener("click", () => {
+                formAuthEngine.reset();
+                dispatchViewTransition(stageProfile);
+            });
+
+            syncRegistryTableUI();
+        });
+    </script>
+</body>
+</html>
