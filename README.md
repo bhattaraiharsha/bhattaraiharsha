@@ -25,6 +25,7 @@
 
 #### Design & UX
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+http://127.0.0.1:3000/.html?vscode-livepreview=true
 
 ---
 
