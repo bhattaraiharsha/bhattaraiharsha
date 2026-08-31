@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Trivia Game</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-color: #f8fafc;
+            --button-hover: #0ea5e9;
+            --error-color: #f43f5e;
+            --success-color: #22c55e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .game-container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 80%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: var(--text-color);
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .level-list {
+            text-align: left;
+            margin: 0 auto 1.5rem auto;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        .level-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .result-message {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Math Trivia Game</h1>
+        
+        <!-- Step 1: Choose Difficulty -->
+        <div id="step-menu">
+            <p>Choose your challenge level (1 to 5):</p>
+            <ul class="level-list">
+                <li><strong>1.</strong> Very Easy</li>
+                <li><strong>2.</strong> Easy</li>
+                <li><strong>3.</strong> Medium</li>
+                <li><strong>4.</strong> Hard</li>
+                <li><strong>5.</strong> Bihar (Legendary)</li>
+            </ul>
+            <br>
+            <input type="number" id="levelInput" min="1" max="5" placeholder="Enter level (1-5)">
+            <br>
+            <button onclick="selectLevel()">Next</button>
+        </div>
+
+        <!-- Step 2: Intermediate Screen (Press Enter / Click to Continue) -->
+        <div id="step-ready" class="hidden">
+            <p id="difficultyTitle" style="color: var(--accent-color); font-weight: bold;"></p>
+            <button onclick="showProblem()">Click to Reveal Problem</button>
+        </div>
+
+        <!-- Step 3: Solve Problem -->
+        <div id="step-problem" class="hidden">
+            <p id="problemText"></p>
+            <div id="extraPromptContainer"></div>
+            <input type="text" id="answerInput" placeholder="Enter your answer...">
+            <br>
+            <button onclick="submitAnswer()">Submit Answer</button>
+        </div>
+
+        <!-- Step 4: Final Result -->
+        <div id="step-result" class="hidden">
+            <p id="finalMessage" class="result-message"></p>
+            <br>
+            <button onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedLevel = 0;
+        let subState = 0; // Used for multi-step prompts like level 1
+
+        function selectLevel() {
+            const input = document.getElementById('levelInput').value;
+            selectedLevel = parseInt(input);
+
+            if (selectedLevel >= 1 && selectedLevel <= 5) {
+                document.getElementById('step-menu').classList.add('hidden');
+                document.getElementById('step-ready').classList.remove('hidden');
+                
+                const names = ["", "Very Easy", "Easy", "Medium", "Hard", "Bihar"];
+                document.getElementById('difficultyTitle').innerText = `Difficulty Level: ${names[selectedLevel]}`;
+            } else {
+                alert("Please enter a valid level between 1 and 5!");
+            }
+        }
+
+        function showProblem() {
+            document.getElementById('step-ready').classList.add('hidden');
+            document.getElementById('step-problem').classList.remove('hidden');
+
+            const pText = document.getElementById('problemText');
+            const extra = document.getElementById('extraPromptContainer');
+
+            if (selectedLevel === 1) {
+                pText.innerText = "Find x when: 2x + 3x = 5";
+                extra.innerHTML = `<p style="font-size:0.9rem; color:#94a3b8;">Are you ready? You have 10 seconds (type 'yes'):</p>`;
+            } else if (selectedLevel === 2) {
+                pText.innerText = "Find x when: 5x * 7x = 140";
+            } else if (selectedLevel === 3) {
+                pText.innerText = "Find x when: x + x = 4";
+            } else if (selectedLevel === 4) {
+                pText.innerText = "If a car is going 50 km/h, how much time does it take to reach a destination 150 km far?";
+            } else if (selectedLevel === 5) {
+                pText.innerText = "Who came first: egg or chicken?\n(If egg type 1, else type 2)";
+            }
+        }
+
+        function submitAnswer() {
+            const ans = document.getElementById('answerInput').value.trim();
+            document.getElementById('step-problem').classList.add('hidden');
+            document.getElementById('step-result').classList.remove('hidden');
+            const finalMsg = document.getElementById('finalMessage');
+
+            if (selectedLevel === 1) {
+                if (subState === 0) {
+                    // Handled readiness check first if needed, but let's keep it direct for clean gameplay flow
+                    subState = 1;
+                }
+                if (ans === "1") {
+                    finalMsg.style.color = "var(--success-color)";
+                    finalMsg.innerText = "✨ That was easy! Try other levels. ✨";
+                } else {
+                    finalMsg.style.color = "var(--error-color)";
+                    finalMsg.innerText = "🤣 LoL, try again next time!";
+                }
+            } else if (selectedLevel === 2) {
+                if (ans === "2") {
+                    finalMsg.style.color = "var(--success-color)";
+                    finalMsg.innerText = "Nice 👍 Perfect answer!";
+                } else {
+                    finalMsg.style.color = "var(--error-color)";
+                    finalMsg.innerText = "Yesto pani saklina! 😅";
+                }
+            } else if (selectedLevel === 3) {
+                if (ans === "2") {
+                    finalMsg.style.color = "var(--success-color)";
+                    finalMsg.innerText = "Great! You nailed it.";
+                } else {
+                    finalMsg.style.color = "var(--error-color)";
+                    finalMsg.innerText = "Tera kya hoga 😆";
+                }
+            } else if (selectedLevel === 4) {
+                if (ans === "3") {
+                    finalMsg.style.color = "var(--success-color)";
+                    finalMsg.innerText = "Wow 😳 Genius move!";
+                } else {
+                    finalMsg.style.color = "var(--error-color)";
+                    finalMsg.innerText = "🤣 Math skills need an upgrade!";
+                }
+            } else if (selectedLevel === 5) {
+                finalMsg.style.color = "var(--accent-color)";
+                finalMsg.innerText = "🦖 Trick question! Dinosaurs came first! 🦖";
+            }
+        }
+    </script>
+</body>
+</html>5

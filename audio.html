@@ -2,85 +2,145 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Harsha's Audio Pitch Studio</title>
     <style>
+      :root {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent-color: #38bdf8;
+        --accent-hover: #0ea5e9;
+        --status-color: #64748b;
+      }
+
       body {
-        font-family: -apple-system, sans-serif;
-        background: #f7fafc;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-primary);
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         margin: 0;
       }
+
       .card {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        background: var(--card-bg);
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
         text-align: center;
         max-width: 400px;
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
+
       h1 {
-        font-size: 18pt;
-        color: #1a202c;
-        margin-bottom: 8px;
+        font-size: 22pt;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 10px 0;
+        letter-spacing: -0.5px;
       }
+
       p {
-        font-size: 10pt;
-        color: #718096;
-        margin-bottom: 24px;
+        font-size: 11pt;
+        color: var(--text-secondary);
+        margin: 0 0 30px 0;
+        line-height: 1.5;
       }
+
       button {
-        background: #2b6cb0;
-        color: white;
+        background: var(--accent-color);
+        color: #0f172a;
         border: none;
-        padding: 12px 24px;
+        padding: 14px 28px;
         font-size: 11pt;
         font-weight: 600;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+        width: 100%;
       }
+
       button:hover {
-        background: #2c5282;
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.3);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      #voiceStatus {
+        margin-top: 20px;
+        font-size: 9.5pt;
+        font-style: italic;
+        color: var(--status-color);
       }
     </style>
   </head>
   <body>
     <div class="card">
-      <h1>Strategic Website Pitch</h1>
+      <h1>Strategic Audio Pitch</h1>
       <p>
-        Press the button below to generate and listen to the professional audio
-        pitch note.
+        Press the button below to generate and listen to the professional audio pitch note for Kabita.
       </p>
       <button onclick="playPitch()">🎙️ Play Audio Note</button>
+      <div id="voiceStatus">Loading voices...</div>
     </div>
 
     <script>
+      let availableVoices = [];
+
+      function loadVoices() {
+        availableVoices = window.speechSynthesis.getVoices();
+        const statusDiv = document.getElementById("voiceStatus");
+        
+        if (availableVoices.length > 0) {
+          statusDiv.textContent = `Studio ready (${availableVoices.length} voices loaded).`;
+        } else {
+          statusDiv.textContent = "No voices detected.";
+        }
+      }
+
+      if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+      }
+
+      loadVoices();
+
       function playPitch() {
-        window.speechSynthesis.cancel(); // Reset any existing speech
+        if (!('speechSynthesis' in window)) {
+          alert("Sorry, your browser doesn't support text-to-speech!");
+          return;
+        }
 
-        const pitchText =
-          "hello kabita"
+        window.speechSynthesis.cancel();
 
+        const pitchText = "hello kabita";
         const utterance = new SpeechSynthesisUtterance(pitchText);
 
-        // Select a premium, natural sounding english voice if available
-        const voices = window.speechSynthesis.getVoices();
-        const premiumVoice = voices.find(
+        const selectedVoice = availableVoices.find(
           (voice) =>
-            voice.name.includes("Google") || voice.name.includes("Natural"),
+            voice.name.includes("Gemini") ||
+            voice.name.toLowerCase().includes("english")
         );
-        if (premiumVoice) utterance.voice = premiumVoice;
 
-        utterance.rate = 0.95; // Slightly slower pacing for professional clarity
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+
+        utterance.rate = 1.0;
         utterance.pitch = 1.0;
 
         window.speechSynthesis.speak(utterance);
       }
-      // Pre-load voices for chrome compatibility
-      window.speechSynthesis.getVoices();
     </script>
   </body>
 </html>
