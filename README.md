@@ -1,6 +1,8 @@
 # Hi there, I'm Harsha Bhattarai 👋
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=2196F3&width=450&lines=BCA+2nd+Semester+Student;Web+Development+Enthusiast;UI%2FUX+Designer+in+Progress)](https://git.io/typing-svg)
+small project https://bolt.new/p/71433335
+
 
 ---
 
